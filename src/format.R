@@ -5,6 +5,7 @@
 # Author: knavero
 ###############################################################################
 
+#loop to collect details for colClasses vector
 done = FALSE;
 types = vector(mode = "character")
 count = 1
@@ -49,27 +50,33 @@ while(!done) {
 cat("The columns will be identifed as such: \n")
 print(types)
 
+#get the column that holds the timestamps and the column that holds the names to be split into wide format
 timeIndex = as.numeric(readline("Which column contains the timestamps (Do NOT count the NULL columns)?"))
 splitColumn = as.numeric(readline("Which column is the column you would like to split into wide format 
 Do NOT count the NULL columns)?"))     
 
+#get the name of the csv file to be formatted
 setwd("~/Desktop/r_workspace/TestData/resources")
 file = readline("Enter the name of the csv file you want to format (file must be in resources folder): ")
 cat("Processing...\n")
 
+#read the csv 
 cat("Reading csv...\n")
 data = read.csv(file = file, header = TRUE, colClasses = types)
 cat("Finished reading csv!\n")
 
+#convert the time index to POSIXct
 cat("Initializing data frame...\n")
 index = as.POSIXct(data[,timeIndex], origin = "1970-01-01", tz = "GMT")
 data[,timeIndex] = index
 cat("Finished initializing data frame!\n")
 
+#reshape the data frame to wide format
 cat("Reshaping data frame to wide format...\n")
 wdata = reshape(data, idvar = names(data[timeIndex]), timevar = names(data[splitColumn]), direction = "wide")
 cat("Finished reshaping data frame to wide format!\n")
 
+#write to output directory
 cat("Writing file to output folder...\n")
 write.csv(wdata, "../output/out.csv", na = "")
 cat("File written to output folder!\n")

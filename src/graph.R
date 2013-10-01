@@ -19,10 +19,10 @@ if (!DEBUG)
 #parse all columns and plot only those with pressure
 for (i in 1:SIZE) {
    if(grepl("iwc", names(wdata[i]))) {
-      print(paste("plotting", names(wdata[i])))
+      cat(paste("plotting", names(wdata[i]), '\n'))
       
       #make temporary data frame to omit NA's
-      df = na.omit(data.frame(wdata$index, wdata[i]))
+      df = na.omit(data.frame(wdata[,1], wdata[i]))
       
       #set up device for plotting/writing to png, set up graphical param, 
       #plot to device, then disconnect from device
