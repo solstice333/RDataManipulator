@@ -1,7 +1,5 @@
 # Description: graph.R handles all plotting operations
 # 
-# TODO: implement auto print of plots successfully
-#
 # Author: knavero
 ###############################################################################
 
@@ -28,38 +26,37 @@ for (i in 1:SIZE) {
       
       #set up device for plotting/writing to png, set up graphical param, 
       #plot to device, then disconnect from device
-      
       if (!DEBUG)
          png(filename = paste("../output/", names(wdata[i]), ".png"), 
-            width = 1600, height = 720)
+            width = 4800, height = 2160)
                
       par(mfrow = c(1, 1), mar = c(B, L, T, R))
       plot(df[,1], df[,2], type = "l", col = "blue", 
-            lwd = 3,
-            ylim = c(0, 2), 
+            lwd = 7,
+            ylim = c(0, max(df[2])), 
             main = names(wdata[i]),
             xlab = "",
             ylab = "inches WC",
-            xaxt = "n",
+            xaxt = "n", yaxt = "n",
             tck = 1)
       
       mtext("index", side = 1, line = 7)
       
+      #dray y axis
+      axis(side = 2, at = seq(from = 0, to = max(df[2]), by = 0.1), 
+            tck = 1, las = 2)
+      
+      #draw x axis
       from = as.POSIXct(paste(format(head(df[,1], 1), "%Y-%m-%d"), "00:00:00"), 
             format = "%Y-%m-%d %H:%M:%S", tz = "GMT")
       to = as.POSIXct(paste(format(tail(df[,1], 1), "%Y-%m-%d"), "00:00:00"), 
             format = "%Y-%m-%d %H:%M:%S", tz = "GMT")
       
-      axis.POSIXct(1, at = seq(from = from, to = to, by = "day"), 
+      axis.POSIXct(1, at = seq(from = from, to = to, by = "hour"), 
          format = "%b %d %H:%M", 
          tck = 1, las = 2)
       
       if (!DEBUG)
          dev.off()
    }
-   
-   if(i %% 4 == 0) {
-      #use this block to create new dev and set graphical parameters
-      #if user decides to plot to window instead of file
-   } 
 }
