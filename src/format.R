@@ -5,40 +5,40 @@
 # Author: knavero
 ###############################################################################
 
-quit = FALSE;
+done = FALSE;
 types = vector(mode = "character")
 count = 1
 
-print("Type description: ")
-print("NULL type will remove a column from the data frame")
-print("character type will represent a string")
-print("numeric type will represent a number with double precision")
+cat("Type description: \n")
+cat("NULL type will remove a column from the data frame\n")
+cat("character type will represent a string\n")
+cat("numeric type will represent a number with double precision\n")
 
-while(!quit) {
-   value = readline(paste("Column", count, ".", "Enter a type name(NULL, character, numeric): "))  
+while(!done) {
+   value = readline(paste("Column", count, ".", "Enter a type name(NULL, character, numeric). Type 'done' when finished: "))  
    
    switch (value, 
       NULL = { 
-         print(value)
+         cat(paste(value, '\n'))
          types = c(types, value)
       },
       
       character = {
-         print(value)
+         cat(paste(value, '\n'))
          types = c(types, value)
       },
       
       numeric = {
-         print(value)
+         cat(paste(value, '\n'))
          types = c(types, value)
       },
       
-      quit = {
-         quit = TRUE
+      done = {
+         done = TRUE
       },
       
       {
-         print('Invalid type. Try again')
+         cat("Invalid type. Try again\n")
          count = count - 1
       }
    )
@@ -46,7 +46,7 @@ while(!quit) {
    count = count + 1
 }
 
-print("The columns will be identifed as such: ")
+cat("The columns will be identifed as such: \n")
 print(types)
 
 timeIndex = as.numeric(readline("Which column contains the timestamps (Do NOT count the NULL columns)?"))
@@ -55,21 +55,21 @@ Do NOT count the NULL columns)?"))
 
 setwd("~/Desktop/r_workspace/TestData/resources")
 file = readline("Enter the name of the csv file you want to format (file must be in resources folder): ")
-print("Processing...")
+cat("Processing...\n")
 
-print("Reading csv...")
+cat("Reading csv...\n")
 data = read.csv(file = file, header = TRUE, colClasses = types)
-print("Finished reading csv!")
+cat("Finished reading csv!\n")
 
-print("Initializing data frame...")
+cat("Initializing data frame...\n")
 index = as.POSIXct(data[,timeIndex], origin = "1970-01-01", tz = "GMT")
 data[,timeIndex] = index
-print("Finished initializing data frame!")
+cat("Finished initializing data frame!\n")
 
-print("Reshaping data frame to wide format...")
+cat("Reshaping data frame to wide format...\n")
 wdata = reshape(data, idvar = names(data[timeIndex]), timevar = names(data[splitColumn]), direction = "wide")
-print("Finished reshaping data frame to wide format!")
+cat("Finished reshaping data frame to wide format!\n")
 
-print("Writing file to output folder...")
+cat("Writing file to output folder...\n")
 write.csv(wdata, "../output/out.csv", na = "")
-print("File written to output folder!")
+cat("File written to output folder!\n")
