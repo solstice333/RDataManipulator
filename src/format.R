@@ -5,60 +5,71 @@
 # Author: knavero
 ###############################################################################
 
-#loop to collect details for colClasses vector
-done = FALSE;
-types = vector(mode = "character")
-count = 1
+#user input within this R script. If bash shell script (the caller of this R script) 
+#is intended to be ran, USER_INPUT is false, true otherwise. 
+USER_INPUT = FALSE 
 
-cat("Type description: \n")
-cat("NULL type will remove a column from the data frame\n")
-cat("character type will represent a string\n")
-cat("numeric type will represent a number with double precision\n")
+#Loop to collect details for colClasses vector
+if(USER_INPUT) {
+   done = FALSE;
+   types = vector(mode = "character")
+   count = 1
 
-while(!done) {
-   value = readline(paste("Column", count, ".", "Enter a type name(NULL, character, numeric). Type 'done' when finished: "))  
+   cat("Type description: \n")
+   cat("NULL type will remove a column from the data frame\n")
+   cat("character type will represent a string\n")
+   cat("numeric type will represent a number with double precision\n")
+
+   while(!done) {
+      value = readline(paste("Column", count, ".", "Enter a type name(NULL, character, numeric). Type 'done' when finished: "))  
    
-   switch (value, 
-      NULL = { 
-         cat(paste(value, '\n'))
-         types = c(types, value)
-      },
-      
-      character = {
-         cat(paste(value, '\n'))
-         types = c(types, value)
-      },
-      
-      numeric = {
-         cat(paste(value, '\n'))
-         types = c(types, value)
-      },
-      
-      done = {
-         done = TRUE
-      },
-      
-      {
-         cat("Invalid type. Try again\n")
-         count = count - 1
-      }
-   )
+      switch (value, 
+         NULL = { 
+            cat(paste(value, '\n'))
+            types = c(types, value)
+         },
+         
+         character = {
+            cat(paste(value, '\n'))
+            types = c(types, value)
+         },
+         
+         numeric = {
+            cat(paste(value, '\n'))
+            types = c(types, value)
+         },
+         
+         done = {
+            done = TRUE
+         },
+         
+         {
+            cat("Invalid type. Try again\n")
+            count = count - 1
+         }
    
-   count = count + 1
+      )
+   
+      count = count + 1
+   }
+
+   cat("The columns will be identifed as such: \n")
+   print(types)
+
+   #get the column that holds the timestamps and the column that holds the names to be split into wide format
+   timeIndex = as.numeric(readline("Which column contains the timestamps (Do NOT count the NULL columns)?"))
+   splitColumn = as.numeric(readline("Which column is the column you would like to split into wide format 
+   Do NOT count the NULL columns)?")) 
+
+   #get the name of the csv file to be formatted
+   setwd("~/Desktop/r_workspace/TestData/resources")
+   file = readline("Enter the name of the csv file you want to format (file must be in resources folder): ")
 }
 
-cat("The columns will be identifed as such: \n")
-print(types)
-
-#get the column that holds the timestamps and the column that holds the names to be split into wide format
-timeIndex = as.numeric(readline("Which column contains the timestamps (Do NOT count the NULL columns)?"))
-splitColumn = as.numeric(readline("Which column is the column you would like to split into wide format 
-Do NOT count the NULL columns)?"))     
-
-#get the name of the csv file to be formatted
-setwd("~/Desktop/r_workspace/TestData/resources")
-file = readline("Enter the name of the csv file you want to format (file must be in resources folder): ")
 cat("Processing...\n")
+
+if (!USER_INPUT)
+   setwd("resources")
 
 #read the csv 
 cat("Reading csv...\n")
@@ -79,4 +90,5 @@ cat("Finished reshaping data frame to wide format!\n")
 #write to output directory
 cat("Writing file to output folder...\n")
 write.csv(wdata, "../output/out.csv", na = "")
-cat("File written to output folder!\n")
+cat("File written to output folder (TestData/output)!\n")
+cat("\n\n")
