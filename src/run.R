@@ -9,6 +9,11 @@
 ###############################################################################
 
 rm(list = ls())
-source("~/Desktop/r_workspace/TestData/src/format.R")
-source("~/Desktop/r_workspace/TestData/src/graph.R")
+
+cmd_args = commandArgs(trailingOnly = TRUE)
+
+print(cmd_args)
+
+#source("~/Desktop/r_workspace/TestData/src/format.R")
+#source("~/Desktop/r_workspace/TestData/src/graph.R")
 print("Done!")
