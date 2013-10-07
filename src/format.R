@@ -1,7 +1,7 @@
 # Description: format.R formats the test data from long format to 
 # wide format based on the mac id's of the sensor with multiple records along
 # a time series
-# 
+#
 # Author: knavero
 ###############################################################################
 
@@ -15,39 +15,44 @@ if(USER_INPUT) {
    types = vector(mode = "character")
    count = 1
 
-   cat("Type description: \n")
-   cat("NULL type will remove a column from the data frame\n")
-   cat("character type will represent a string\n")
-   cat("numeric type will represent a number with double precision\n")
-
+   cat("Each column of the data frame must be associated with a data type. Type description:\n")
+   cat("   1) 'NULL' type will remove a column from the data frame\n")
+   cat("   2) 'character' type will represent a string\n")
+   cat("   3) 'numeric' type will represent a number with double precision\n")
+   cat("\n")
+   
    while(!done) {
-      value = readline(paste("Column", count, ".", "Enter a type name(NULL, character, numeric). Type 'done' when finished: "))  
+      cat("(1) NULL\n") 
+      cat("(2) character\n") 
+      cat("(3) numeric\n") 
+      cat("(d) done\n")
+
+      value = readline(paste("Column ", count, ". Enter a type: "))
    
       switch (value, 
-         NULL = { 
-            cat(paste(value, '\n'))
-            types = c(types, value)
+         "1" = { 
+            cat(paste("NULL", '\n'))
+            types = c(types, "NULL")
          },
          
-         character = {
-            cat(paste(value, '\n'))
-            types = c(types, value)
+         "2" = {
+            cat(paste("character", '\n'))
+            types = c(types, "character")
          },
          
-         numeric = {
-            cat(paste(value, '\n'))
-            types = c(types, value)
+         "3" = {
+            cat(paste("numeric", '\n'))
+            types = c(types, "numeric")
          },
          
-         done = {
+         "d" = {
             done = TRUE
          },
          
          {
-            cat("Invalid type. Try again\n")
+            cat(paste("\n", value, " is an invalid type. Try again\n"))
             count = count - 1
          }
-   
       )
    
       count = count + 1
@@ -63,7 +68,7 @@ if(USER_INPUT) {
 
    #get the name of the csv file to be formatted
    setwd("~/Desktop/r_workspace/TestData/resources")
-   file = readline("Enter the name of the csv file you want to format (file must be in resources folder): ")
+   file = readline("Enter the name of the csv file you want to format (file must be in 'TestData/resources' folder): ")
 }
 
 cat("Processing...\n")
@@ -76,9 +81,10 @@ cat("Reading csv...\n")
 data = read.csv(file = file, header = TRUE, colClasses = types)
 cat("Finished reading csv!\n")
 
-#convert the time index to POSIXct
+#convert the time index to POSIXct (time index input must be numerical/signed integer)
 cat("Initializing data frame...\n")
-index = as.POSIXct(data[,timeIndex], origin = "1970-01-01", tz = "GMT")
+index_gmt = as.POSIXct(data[,timeIndex], origin = "1970-01-01", tz = "GMT")
+index = index_pt = as.POSIXct(format(index_gmt, tz = "America/Los_Angeles"));
 data[,timeIndex] = index
 cat("Finished initializing data frame!\n")
 
