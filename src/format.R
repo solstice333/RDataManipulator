@@ -15,7 +15,7 @@
 #user input within this R script. If bash shell script (the caller of this R script) 
 #is intended to be ran, DEBUG is false, true otherwise. In other words, DEBUG is true when
 #this script is intended to be ran individually
-DEBUG = TRUE
+DEBUG = FALSE
 
 #Loop to collect details for colClasses vector
 if(DEBUG) {

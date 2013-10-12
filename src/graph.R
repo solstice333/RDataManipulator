@@ -36,7 +36,7 @@ for (i in 2:SIZE) {
       par(mfrow = c(1, 1), mar = c(B, L, T, R))
       plot(df[,1], df[,2], type = "l", col = "blue", 
             lwd = 7,
-            ylim = c(0, max(df[2])), 
+            ylim = c(floor(min(df[2], na.rm = TRUE) / 0.1) * 0.1, max(df[2], na.rm = TRUE)), 
             main = names(wdata[i]),
             xlab = "",
             ylab = "inches WC",
@@ -46,8 +46,9 @@ for (i in 2:SIZE) {
       mtext("index", side = 1, line = 7)
       
       #dray y axis
-      axis(side = 2, at = seq(from = 0, to = max(df[2]), by = 0.1), 
-            tck = 1, las = 2)
+      axis(side = 2, at = seq(from = floor(min(df[2], na.rm = TRUE) / 0.1) * 0.1, 
+         to = max(df[2], na.rm = TRUE), by = 0.1), 
+         tck = 1, las = 2)
       
       #draw x axis
       from = as.POSIXct(paste(format(head(df[,1], 1), "%Y-%m-%d"), "00:00:00"), 
@@ -83,7 +84,7 @@ for (i in 2:SIZE) {
          par(mfrow = c(1, 1), mar = c(B, L, T, R))
          plot(day_df[,1], day_df[,2], type = "l", col = "blue", 
                lwd = 7,
-               ylim = c(0, max(df[2])), 
+               ylim = c(floor(min(df[2], na.rm = TRUE) / 0.1) * 0.1, max(df[2], na.rm = TRUE)), 
                main = paste(names(wdata[i]), " ", a),
                xlab = "",
                ylab = "inches WC",
@@ -93,8 +94,9 @@ for (i in 2:SIZE) {
          mtext("index", side = 1, line = 7)
          
          #dray y axis
-         axis(side = 2, at = seq(from = 0, to = max(df[2]), by = 0.1), 
-               tck = 1, las = 2)
+         axis(side = 2, at = seq(from = floor(min(df[2], na.rm = TRUE) / 0.1) * 0.1, 
+            to = max(df[2], na.rm = TRUE), by = 0.1), 
+            tck = 1, las = 2)
          
          #draw x axis
          axis.POSIXct(1, at = seq(from = a, to = a + 60 * 60 * 24, by = "hour"), 
@@ -136,7 +138,7 @@ if (EnoughColors) {
    par(mfrow = c(1, 1), mar = c(B, L, T, R))
    plot(x = wdata[,1], y = wdata[,2], type = "p", col = colors[1], 
          lwd = 0.5,
-         ylim = c(0, max(nframe, na.rm = TRUE)), 
+         ylim = c(floor(min(nframe, na.rm = TRUE) / 0.1) * 0.1, max(nframe, na.rm = TRUE)), 
          main = "overlay",
          xlab = "",
          ylab = "inches WC",
@@ -152,8 +154,9 @@ if (EnoughColors) {
    }
    
    #dray y axis
-   axis(side = 2, at = seq(from = 0, to = max(nframe, na.rm = TRUE), by = 0.1), 
-         tck = 1, las = 2)
+   axis(side = 2, at = seq(from = floor(min(nframe, na.rm = TRUE) / 0.1) * 0.1, 
+      to = max(nframe, na.rm = TRUE), by = 0.1), 
+      tck = 1, las = 2)
    
    #draw x axis
    from = as.POSIXct(paste(format(head(wdata[,1], 1), "%Y-%m-%d"), "00:00:00"), 
@@ -201,7 +204,7 @@ if (EnoughColors) {
       par(mfrow = c(1, 1), mar = c(B, L, T, R))
       plot(x = day_df[,1], y = day_df[,2], type = "p", col = colors[1], 
             lwd = 0.5,
-            ylim = c(0, 1.5 * max(nframe, na.rm = TRUE)), 
+            ylim = c(floor(min(nframe, na.rm = TRUE) / 0.1) * 0.1, 1.5 * max(nframe, na.rm = TRUE)), 
             main = paste(a, "overlay"),
             xlab = "",
             ylab = "inches WC",
@@ -217,8 +220,9 @@ if (EnoughColors) {
       }
       
       #dray y axis
-      axis(side = 2, at = seq(from = 0, to = max(nframe, na.rm = TRUE), by = 0.1), 
-            tck = 1, las = 2)
+      axis(side = 2, at = seq(from = floor(min(nframe, na.rm = TRUE) / 0.1) * 0.1, 
+         to = max(nframe, na.rm = TRUE), by = 0.1), 
+         tck = 1, las = 2)
       
       #draw x axis
       axis.POSIXct(1, at = seq(from = a, to = a + 60 * 60 * 24, by = "hour"), 
