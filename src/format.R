@@ -2,12 +2,19 @@
 # wide format based on the mac id's of the sensor with multiple records along
 # a time series
 #
+# TODO check network log data integrity (compare with sampling rate of pressure log). 
+# Should be 1 sample per 10 seconds.
+#
+# TODO Additional overlay graphs with all new functional motes
+# Duration: Single day, occupied hours
+# Dates: Aug 6 and Aug 7
+#
 # Author: knavero
 ###############################################################################
 
 #user input within this R script. If bash shell script (the caller of this R script) 
 #is intended to be ran, USER_INPUT is false, true otherwise. 
-USER_INPUT = FALSE 
+USER_INPUT = TRUE
 
 #Loop to collect details for colClasses vector
 if(USER_INPUT) {

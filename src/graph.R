@@ -27,6 +27,7 @@ for (i in 2:SIZE) {
       #make temporary data frame to omit NA's
       df = na.omit(data.frame(wdata[,1], wdata[i]))
       
+      #BEGIN printing plot for each daily sensor across the whole time span here
       #set up device for plotting/writing to png, set up graphical param, 
       #plot to device, then disconnect from device
       png(filename = paste("../output/", names(wdata[i]), ".png"), 
@@ -60,8 +61,7 @@ for (i in 2:SIZE) {
       
       dev.off()
       
-      
-      #print daily plots here
+      #BEGIN printing daily plots for each sensor here
       cat(paste("printing daily plots for", names(wdata[i]), '\n'))
       
       a = start = as.POSIXct(paste(format(head(df[,1], 1), "%Y-%m-%d"), "00:00:00"), 
@@ -110,7 +110,8 @@ for (i in 2:SIZE) {
    }
 }
 
-cat("Printing overlay\n")
+#BEGIN plotting overlay for all sensors across entire time span here
+cat("Printing overlay...\n")
 
 #open png device connection
 png(filename = paste("../output/overlay.png"), 
@@ -141,7 +142,7 @@ if (EnoughColors) {
          ylab = "inches WC",
          xaxt = "n", yaxt = "n",
          tck = 1)
-   colorsUsed = "black"
+   colorsUsed = colors[1]
    mtext("index", side = 1, line = 7)
    
    SIZE = length(wdata)
@@ -176,5 +177,69 @@ if (EnoughColors) {
    #disconnect device
    dev.off()
    
-   cat("Done plotting!\n")
+   #BEGIN daily plotting overlay for all sensors here
+   a = start = as.POSIXct(paste(format(head(wdata[,1], 1), "%Y-%m-%d"), "00:00:00"), 
+         format = "%Y-%m-%d %H:%M:%S")
+   end = as.POSIXct(paste(format(tail(wdata[,1], 1), "%Y-%m-%d"), "00:00:00"),
+         format = "%Y-%m-%d %H:%M:%S") + 60 * 60 * 24
+   
+   cat("Plotting daily overlay plots...\n")
+   
+   while (a < end) {
+      cat(paste("Plotting daily overlay plots for", a, '\n'))
+      
+      #take day subset and numerical frame to extract max value from
+      day_df = subset(wdata, wdata[,1] >= a & wdata[,1] <= a + 60 * 60 * 24)
+      nframe = day_df
+      nframe[1] = NULL
+      
+      #open connection for png writing
+      png(filename = paste("../output/", a, ".png"), 
+            width = 1600, height = 720)
+      
+      #setup plot and draw line
+      par(mfrow = c(1, 1), mar = c(B, L, T, R))
+      plot(x = day_df[,1], y = day_df[,2], type = "p", col = colors[1], 
+            lwd = 0.5,
+            ylim = c(0, 1.5 * max(nframe, na.rm = TRUE)), 
+            main = paste(a, "overlay"),
+            xlab = "",
+            ylab = "inches WC",
+            xaxt = "n", yaxt = "n",
+            tck = 1)
+      colorsUsed = colors[1]
+      mtext("index", side = 1, line = 7)
+      
+      SIZE = length(wdata)
+      for (i in 3:SIZE) {
+         lines(x = day_df[,1], y = day_df[,i], type = "p", col = colors[i - 1], lwd = 0.5)
+         colorsUsed = c(colorsUsed, colors[i - 1])
+      }
+      
+      #dray y axis
+      axis(side = 2, at = seq(from = 0, to = max(nframe, na.rm = TRUE), by = 0.1), 
+            tck = 1, las = 2)
+      
+      #draw x axis
+      axis.POSIXct(1, at = seq(from = a, to = a + 60 * 60 * 24, by = "hour"), 
+            format = "%b %d %H:%M", 
+            tck = 1, las = 2)
+      
+      #create legend
+      legendNames = vector(mode = "character")
+      for(i in 2:SIZE) {
+         legendNames = c(legendNames, names(day_df[i]))
+      }
+      
+      legend("topleft", lty = rep("solid", SIZE - 1), lwd = 5, bty = "n", cex = 1.25, 
+            legend = legendNames, col = colorsUsed)
+      
+      #close connection to device
+      dev.off();
+      
+      #increment to next day
+      a = a + 60*60*24
+   }
 }
+
+cat("Done plotting graphs!\n")
