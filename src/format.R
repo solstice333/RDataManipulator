@@ -13,11 +13,12 @@
 ###############################################################################
 
 #user input within this R script. If bash shell script (the caller of this R script) 
-#is intended to be ran, USER_INPUT is false, true otherwise. 
-USER_INPUT = TRUE
+#is intended to be ran, DEBUG is false, true otherwise. In other words, DEBUG is true when
+#this script is intended to be ran individually
+DEBUG = FALSE
 
 #Loop to collect details for colClasses vector
-if(USER_INPUT) {
+if(DEBUG) {
    done = FALSE;
    types = vector(mode = "character")
    count = 1
@@ -80,7 +81,7 @@ if(USER_INPUT) {
 
 cat("Processing...\n")
 
-if (!USER_INPUT)
+if (!DEBUG)
    setwd("resources")
 
 #read the csv 
