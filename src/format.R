@@ -15,7 +15,7 @@
 #user input within this R script. If bash shell script (the caller of this R script) 
 #is intended to be ran, DEBUG is false, true otherwise. In other words, DEBUG is true when
 #this script is intended to be ran individually
-DEBUG = FALSE
+DEBUG = TRUE
 
 #Loop to collect details for colClasses vector
 if(DEBUG) {
@@ -84,9 +84,10 @@ cat("Processing...\n")
 if (!DEBUG)
    setwd("resources")
 
-#read the csv 
+#read the csv, remove last row as a precaution
 cat("Reading csv...\n")
 data = read.csv(file = file, header = TRUE, colClasses = types)
+data = data[1:nrow(data) - 1,]
 cat("Finished reading csv!\n")
 
 #convert the time index to POSIXct (time index input must be numerical/signed integer)
