@@ -21,23 +21,70 @@ if (DEBUG)
 
 #parse all columns and plot only those with pressure
 for (i in 2:SIZE) {
-   if(grepl("iwc", names(wdata[i]))) {
-      cat(paste("plotting", names(wdata[i]), '\n'))
+   cat(paste("plotting", names(wdata[i]), '\n'))
+   
+   #make temporary data frame to omit NA's
+   df = na.omit(data.frame(wdata[,1], wdata[i]))
+   
+   #BEGIN printing plot for each daily sensor across the whole time span here
+   #set up device for plotting/writing to png, set up graphical param, 
+   #plot to device, then disconnect from device
+   png(filename = paste("../output/", names(wdata[i]), ".png"), 
+      width = 1600 * WIDTH_MULTIPLIER, height = 720 * HEIGHT_MULTIPLIER)
+            
+   par(mfrow = c(1, 1), mar = c(B, L, T, R))
+   plot(df[,1], df[,2], type = "l", col = "blue", 
+         lwd = 7,
+         ylim = c(floor(min(df[2], na.rm = TRUE) / 0.1) * 0.1, max(df[2], na.rm = TRUE)), 
+         main = names(wdata[i]),
+         xlab = "",
+         ylab = "inches WC",
+         xaxt = "n", yaxt = "n",
+         tck = 1)
+   
+   mtext("index", side = 1, line = 7)
+   
+   #dray y axis
+   axis(side = 2, at = seq(from = floor(min(df[2], na.rm = TRUE) / 0.1) * 0.1, 
+      to = max(df[2], na.rm = TRUE), by = 0.1), 
+      tck = 1, las = 2)
+   
+   #draw x axis
+   from = as.POSIXct(paste(format(head(df[,1], 1), "%Y-%m-%d"), "00:00:00"), 
+         format = "%Y-%m-%d %H:%M:%S")
+   to = as.POSIXct(paste(format(tail(df[,1], 1), "%Y-%m-%d"), "00:00:00"), 
+         format = "%Y-%m-%d %H:%M:%S") + 60 * 60 * 24
+   
+   axis.POSIXct(1, at = seq(from = from, to = to, by = "hour"), 
+      format = "%b %d %H:%M", 
+      tck = 1, las = 2)
+   
+   dev.off()
+   
+   #BEGIN printing daily plots for each sensor here
+   cat(paste("printing daily plots for", names(wdata[i]), '\n'))
+   
+   a = start = as.POSIXct(paste(format(head(df[,1], 1), "%Y-%m-%d"), "00:00:00"), 
+         format = "%Y-%m-%d %H:%M:%S")
+   end = as.POSIXct(paste(format(tail(df[,1], 1), "%Y-%m-%d"), "00:00:00"),
+         format = "%Y-%m-%d %H:%M:%S") + 60 * 60 * 24
+   
+   while (a < end) {
+      cat(paste("printing daily plots for", names(wdata[i]), a, '\n'))
       
-      #make temporary data frame to omit NA's
-      df = na.omit(data.frame(wdata[,1], wdata[i]))
+      #take day subset
+      day_df = subset(df, df[,1] >= a & df[,1] <= a + 60 * 60 * 24) 
+
+      #open connection for png writing
+      png(filename = paste("../output/", names(wdata[i]), a, ".png"), 
+            width = 1600, height = 720)
       
-      #BEGIN printing plot for each daily sensor across the whole time span here
-      #set up device for plotting/writing to png, set up graphical param, 
-      #plot to device, then disconnect from device
-      png(filename = paste("../output/", names(wdata[i]), ".png"), 
-         width = 1600 * WIDTH_MULTIPLIER, height = 720 * HEIGHT_MULTIPLIER)
-               
+      #setup plot and draw line
       par(mfrow = c(1, 1), mar = c(B, L, T, R))
-      plot(df[,1], df[,2], type = "l", col = "blue", 
+      plot(day_df[,1], day_df[,2], type = "l", col = "blue", 
             lwd = 7,
             ylim = c(floor(min(df[2], na.rm = TRUE) / 0.1) * 0.1, max(df[2], na.rm = TRUE)), 
-            main = names(wdata[i]),
+            main = paste(names(wdata[i]), " ", a),
             xlab = "",
             ylab = "inches WC",
             xaxt = "n", yaxt = "n",
@@ -51,64 +98,15 @@ for (i in 2:SIZE) {
          tck = 1, las = 2)
       
       #draw x axis
-      from = as.POSIXct(paste(format(head(df[,1], 1), "%Y-%m-%d"), "00:00:00"), 
-            format = "%Y-%m-%d %H:%M:%S")
-      to = as.POSIXct(paste(format(tail(df[,1], 1), "%Y-%m-%d"), "00:00:00"), 
-            format = "%Y-%m-%d %H:%M:%S") + 60 * 60 * 24
-      
-      axis.POSIXct(1, at = seq(from = from, to = to, by = "hour"), 
-         format = "%b %d %H:%M", 
-         tck = 1, las = 2)
-      
-      dev.off()
-      
-      #BEGIN printing daily plots for each sensor here
-      cat(paste("printing daily plots for", names(wdata[i]), '\n'))
-      
-      a = start = as.POSIXct(paste(format(head(df[,1], 1), "%Y-%m-%d"), "00:00:00"), 
-            format = "%Y-%m-%d %H:%M:%S")
-      end = as.POSIXct(paste(format(tail(df[,1], 1), "%Y-%m-%d"), "00:00:00"),
-            format = "%Y-%m-%d %H:%M:%S") + 60 * 60 * 24
-      
-      while (a < end) {
-         cat(paste("printing daily plots for", names(wdata[i]), a, '\n'))
-         
-         #take day subset
-         day_df = subset(df, df[,1] >= a & df[,1] <= a + 60 * 60 * 24) 
-
-         #open connection for png writing
-         png(filename = paste("../output/", names(wdata[i]), a, ".png"), 
-               width = 1600, height = 720)
-         
-         #setup plot and draw line
-         par(mfrow = c(1, 1), mar = c(B, L, T, R))
-         plot(day_df[,1], day_df[,2], type = "l", col = "blue", 
-               lwd = 7,
-               ylim = c(floor(min(df[2], na.rm = TRUE) / 0.1) * 0.1, max(df[2], na.rm = TRUE)), 
-               main = paste(names(wdata[i]), " ", a),
-               xlab = "",
-               ylab = "inches WC",
-               xaxt = "n", yaxt = "n",
-               tck = 1)
-         
-         mtext("index", side = 1, line = 7)
-         
-         #dray y axis
-         axis(side = 2, at = seq(from = floor(min(df[2], na.rm = TRUE) / 0.1) * 0.1, 
-            to = max(df[2], na.rm = TRUE), by = 0.1), 
+      axis.POSIXct(1, at = seq(from = a, to = a + 60 * 60 * 24, by = "hour"), 
+            format = "%b %d %H:%M", 
             tck = 1, las = 2)
-         
-         #draw x axis
-         axis.POSIXct(1, at = seq(from = a, to = a + 60 * 60 * 24, by = "hour"), 
-               format = "%b %d %H:%M", 
-               tck = 1, las = 2)
-         
-         #close connection to device
-         dev.off();
-         
-         #increment to next day
-         a = a + 60*60*24
-      }
+      
+      #close connection to device
+      dev.off();
+      
+      #increment to next day
+      a = a + 60*60*24
    }
 }
 

@@ -2,13 +2,6 @@
 # wide format based on the mac id's of the sensor with multiple records along
 # a time series
 #
-# TODO check network log data integrity (compare with sampling rate of pressure log). 
-# Should be 1 sample per 10 seconds.
-#
-# TODO Additional overlay graphs with all new functional motes
-# Duration: Single day, occupied hours
-# Dates: Aug 6 and Aug 7
-#
 # Author: knavero
 ###############################################################################
 
@@ -88,6 +81,7 @@ if (!DEBUG)
 cat("Reading csv...\n")
 data = read.csv(file = file, header = TRUE, colClasses = types)
 data = data[1:nrow(data) - 1,]
+data = data[order(data$timestamp),]
 cat("Finished reading csv!\n")
 
 #convert the time index to POSIXct (time index input must be numerical/signed integer)
@@ -105,5 +99,36 @@ cat("Finished reshaping data frame to wide format!\n")
 #write to output directory
 cat("Writing file to output folder...\n")
 write.csv(wdata, "../output/out.csv", na = "")
+cat("File written to output folder (TestData/output)!\n")
+cat("\n\n")
+
+#create mote reliability summary (rframe stands for reliability frame)
+name = character()
+reliability = numeric()
+
+for (i in 2:length(wdata)) {
+   cat(paste("Testing reliability for ", names(wdata[i]), '\n'))
+   rframe = na.omit(data.frame(wdata[1], wdata[i]))
+   delta = c(0, diff(rframe[,1]))
+   rframe = data.frame(rframe, delta)
+   sub_rframe = subset(rframe, delta >= 12)
+   x = 100 - nrow(sub_rframe) / nrow(rframe) * 100
+   
+   name = c(name, names(rframe[2]))
+   reliability = c(reliability, x)
+   
+   print(sub_rframe)
+   
+   #write sub_rframe to output directory
+   cat("Writing file to output folder...\n")
+   write.csv(sub_rframe, paste("../output/lag", names(rframe[2]), ".csv"), na = "")
+   cat("File written to output folder (TestData/output)!\n")
+}
+
+summaryframe = data.frame(name, reliability)
+
+#write summary to output directory
+cat("Writing file to output folder...\n")
+write.csv(summaryframe, "../output/summary.csv", na = "")
 cat("File written to output folder (TestData/output)!\n")
 cat("\n\n")
