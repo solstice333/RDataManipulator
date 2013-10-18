@@ -2,6 +2,7 @@
 
 ##Dependencies##
 R core - http://cran.us.r-project.org/
+
 zip - compression and file packaging utility for Linux and Unix
 
 Note: when run.sh is ran, it will prompt the user for password before installing all dependencies
