@@ -11,6 +11,19 @@ quit=$false
 count=1
 array=()
 
+echo "Enter the name of the csv file you want to format" 
+echo -e "(file must be in "TestData/resources" folder): \c" 
+read file
+filepath="resources/$file"
+
+if [ ! -f $filepath ]; then
+   echo "File not found!"
+   exit 1
+   
+fi
+
+echo ""
+
 echo -e "\nEach column of the data frame must be associated with a data type. Type description:"
 echo "   1) 'NULL' type will remove a column from the data frame"
 echo "   2) 'character' type will represent a string"
@@ -56,11 +69,6 @@ echo ""
 echo "Which column is the column you would like to split into wide format" 
 echo -e "(Do NOT count the NULL columns)? \c"
 read splitColumn
-echo ""
-
-echo "Enter the name of the csv file you want to format" 
-echo -e "(file must be in "TestData/resources" folder): \c" 
-read file
 echo ""
 
 R --vanilla --silent --args ${array[*]} $timeIndex $splitColumn $file < src/master.R
