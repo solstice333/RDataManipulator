@@ -5,6 +5,9 @@
 echo "Installing r-base..."
 sudo apt-get install r-base
 
+echo "Installing zip..."
+sudo apt-get install zip
+
 true=1
 false=0
 quit=$false
@@ -72,3 +75,5 @@ read splitColumn
 echo ""
 
 R --vanilla --silent --args ${array[*]} $timeIndex $splitColumn $file < src/master.R
+
+zip -r output/output.zip output/*
