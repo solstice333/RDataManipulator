@@ -7,13 +7,12 @@ R Package "zoo" - http://cran.r-project.org/web/packages/zoo/index.html
 
 zip - compression and file packaging utility for Linux and Unix
 
-Note: when run.sh is ran, it will prompt the user for password before installing all dependencies
 
 ##How to use##
 After cloning the repository, follow the steps below:
 
-1) Move input csv files to resources folder (input csv files must have a header to name
-   the columns)
+1) Move input csv files to resources folder (Input csv files must have a header to name
+   the columns. See test.csv in resources folder as an example.)
 
 2) Underneath parent folder, double click on setup.sh and choose "Run in terminal". 
    Alternatively, setup.sh can be executed directly within the terminal using 
