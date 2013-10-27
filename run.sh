@@ -1,12 +1,6 @@
 #!/bin/bash
 
-#TODO make this shell script work in that it will run the run.R script
-
-echo "Installing r-base..."
-sudo apt-get install r-base
-
-echo "Installing zip..."
-sudo apt-get install zip
+# Description: run.sh is for the user to run everything from the highest level
 
 true=1
 false=0
@@ -15,15 +9,16 @@ count=1
 array=()
 
 echo "Enter the name of the csv file you want to format" 
+
 echo -e "(file must be in "TestData/resources" folder): \c" 
 read file
 filepath="resources/$file"
-
-if [ ! -f $filepath ]; then
-   echo "File not found!"
-   exit 1
-   
-fi
+until [ -f $filepath ]; do
+   echo "File does not exist. Try again."
+   echo -e "(file must be in "TestData/resources" folder): \c" 
+   read file
+   filepath="resources/$file"
+done
 
 echo ""
 

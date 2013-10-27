@@ -2,8 +2,13 @@
 #
 # Author: knavero
 ###############################################################################
+library("zoo")
+
 #Debug var
 DEBUG = FALSE
+
+#Reliability threshold
+RELIABILITY_THRESHOLD = 12
 
 #Width and height multipliers
 WIDTH_MULTIPLIER = 3
@@ -17,7 +22,7 @@ R = 2
 
 SIZE = length(wdata)
 if (DEBUG)
-   SIZE = 2
+   SIZE = 8
 
 #parse all columns and plot only those with pressure
 for (i in 2:SIZE) {
@@ -242,6 +247,52 @@ if (EnoughColors) {
       #increment to next day
       a = a + 60*60*24
    }
+}
+
+#BEGIN plotting visuals for reliability of motes
+for (i in 2:SIZE) {
+   cat(paste("plotting visuals for mote reliability: ", names(wdata[i]), '\n'))
+   
+   #set up the reliability data frame
+   rframe = na.omit(data.frame(wdata[1], wdata[i]))
+   delta = c(diff(rframe[,1]), 0)
+   relFlag = delta < RELIABILITY_THRESHOLD
+   reliability = summaryframe[i - 1,2]
+   y = relFlag * reliability
+   rframe = data.frame(rframe, delta, relFlag, reliability, y)
+   
+   #zoo transformation in order to use na.locf (last observation carried forward)
+   zooTrans = data.frame(rframe[2], rframe[3], rframe[4], rframe[5], rframe[6])
+   zooTrans = zoo(x = zooTrans, order.by = rframe[,1])
+   secIndex = seq(from = start(zooTrans), to = end(zooTrans), by = "sec")
+   zooTrans = na.locf(object = zooTrans, xout = secIndex)
+   
+   #open png device connection and set the parameters then plot
+   png(filename = paste("../output/", names(wdata[i]), "_reliability.png"), 
+         width = 1600 * WIDTH_MULTIPLIER, height = 720 * HEIGHT_MULTIPLIER)
+   
+   par(mfrow = c(1, 1), mar = c(B, L, T, R))
+   plot(x = index(zooTrans), y = zooTrans$y, type = "l", col = "blue", 
+         lwd = 7,
+         main = paste(names(wdata[i]), " mote reliability"),
+         xlab = "",
+         ylab = "reliability %",
+         xaxt = "n",
+         tck = 1)
+   
+   mtext("index", side = 1, line = 7)
+   
+   #draw x axis
+   from = as.POSIXct(paste(format(start(zooTrans), "%Y-%m-%d"), "00:00:00"), 
+         format = "%Y-%m-%d %H:%M:%S")
+   to = as.POSIXct(paste(format(end(zooTrans), "%Y-%m-%d"), "00:00:00"), 
+         format = "%Y-%m-%d %H:%M:%S") + 60 * 60 * 24
+   
+   axis.POSIXct(1, at = seq(from = from, to = to, by = "hour"), 
+         format = "%b %d %H:%M", 
+         tck = 1, las = 2)
+   
+   dev.off()
 }
 
 cat("Done plotting graphs!\n")

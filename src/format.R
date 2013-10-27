@@ -10,12 +10,28 @@
 #this script is intended to be ran individually
 DEBUG = FALSE
 
+#Reliability threshold
+RELIABILITY_THRESHOLD = 12
+
 #Loop to collect details for colClasses vector
 if(DEBUG) {
    done = FALSE;
    types = vector(mode = "character")
    count = 1
 
+   #get the name of the csv file to be formatted
+   setwd("~/Desktop/r_workspace/TestData/resources")
+   
+   repeat {
+      file = readline("Enter the name of the csv file you want to format (file must be in 'TestData/resources' folder): ")
+      if (file.exists(file.path(getwd(), file))) {
+         break;
+      }
+      else {
+         cat("File does not exist. Try again.")
+      }
+   }
+   
    cat("Each column of the data frame must be associated with a data type. Type description:\n")
    cat("   1) 'NULL' type will remove a column from the data frame\n")
    cat("   2) 'character' type will represent a string\n")
@@ -66,10 +82,6 @@ if(DEBUG) {
    timeIndex = as.numeric(readline("Which column contains the timestamps (Do NOT count the NULL columns)?"))
    splitColumn = as.numeric(readline("Which column is the column you would like to split into wide format 
    Do NOT count the NULL columns)?")) 
-
-   #get the name of the csv file to be formatted
-   setwd("~/Desktop/r_workspace/TestData/resources")
-   file = readline("Enter the name of the csv file you want to format (file must be in 'TestData/resources' folder): ")
 }
 
 cat("Processing...\n")
@@ -111,7 +123,7 @@ for (i in 2:length(wdata)) {
    rframe = na.omit(data.frame(wdata[1], wdata[i]))
    delta = c(0, diff(rframe[,1]))
    rframe = data.frame(rframe, delta)
-   sub_rframe = subset(rframe, delta >= 12)
+   sub_rframe = subset(rframe, delta >= RELIABILITY_THRESHOLD)
    x = 100 - nrow(sub_rframe) / nrow(rframe) * 100
    
    name = c(name, names(rframe[2]))
