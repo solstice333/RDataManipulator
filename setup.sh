@@ -5,4 +5,4 @@
 
 sudo apt-get install r-base
 sudo apt-get install zip
-R --vanilla --silent < src/setup.R
+sudo R --vanilla --silent < src/setup.R
