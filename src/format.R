@@ -8,12 +8,22 @@
 #user input within this R script. If bash shell script (the caller of this R script) 
 #is intended to be ran, DEBUG is false, true otherwise. In other words, DEBUG is true when
 #this script is intended to be ran individually
-DEBUG = FALSE
+DEBUG = TRUE
 
 #Reliability threshold
 RELIABILITY_THRESHOLD = 12
 
 #Loop to collect details for colClasses vector
+# Input for data frame to have mac_id, timestamp, iwc
+#    test.csv
+#    1 (NULL)
+#    2 (character)
+#    3 (numeric)
+#    3 (numeric)
+#    1 (NULL)
+#    d (done)
+#    2 (timestamp selection)
+#    1 (split mac_id)
 if(DEBUG) {
    done = FALSE;
    types = vector(mode = "character")
@@ -24,12 +34,10 @@ if(DEBUG) {
    
    repeat {
       file = readline("Enter the name of the csv file you want to format (file must be in 'TestData/resources' folder): ")
-      if (file.exists(file.path(getwd(), file))) {
-         break;
-      }
-      else {
-         cat("File does not exist. Try again.")
-      }
+      if (file.exists(file.path(getwd(), file)))
+         break
+      else
+         cat("File does not exist. Try again.")  
    }
    
    cat("Each column of the data frame must be associated with a data type. Type description:\n")
@@ -129,12 +137,12 @@ for (i in 2:length(wdata)) {
    name = c(name, names(rframe[2]))
    reliability = c(reliability, x)
    
-   print(sub_rframe)
+   #print(sub_rframe)
    
    #write sub_rframe to output directory
-   cat("Writing file to output folder...\n")
-   write.csv(sub_rframe, paste("../output/lag", names(rframe[2]), ".csv"), na = "")
-   cat("File written to output folder (TestData/output)!\n")
+   #cat("Writing file to output folder...\n")
+   #write.csv(sub_rframe, paste("../output/lag", names(rframe[2]), ".csv"), na = "")
+   #cat("File written to output folder (TestData/output)!\n")
 }
 
 summaryframe = data.frame(name, reliability)
@@ -144,3 +152,7 @@ cat("Writing file to output folder...\n")
 write.csv(summaryframe, "../output/summary.csv", na = "")
 cat("File written to output folder (TestData/output)!\n")
 cat("\n\n")
+
+# go back to parent directory
+setwd("..")
+   

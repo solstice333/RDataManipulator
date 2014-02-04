@@ -24,7 +24,7 @@ SIZE = length(wdata)
 if (DEBUG)
    SIZE = 8
 
-#parse all columns and plot only those with pressure
+#parse all sensors
 for (i in 2:SIZE) {
    cat(paste("plotting", names(wdata[i]), '\n'))
    
@@ -34,7 +34,7 @@ for (i in 2:SIZE) {
    #BEGIN printing plot for each daily sensor across the whole time span here
    #set up device for plotting/writing to png, set up graphical param, 
    #plot to device, then disconnect from device
-   png(filename = paste("../output/", names(wdata[i]), ".png"), 
+   png(filename = paste("output/", names(wdata[i]), ".png"), 
       width = 1600 * WIDTH_MULTIPLIER, height = 720 * HEIGHT_MULTIPLIER)
             
    par(mfrow = c(1, 1), mar = c(B, L, T, R))
@@ -81,7 +81,7 @@ for (i in 2:SIZE) {
       day_df = subset(df, df[,1] >= a & df[,1] <= a + 60 * 60 * 24) 
 
       #open connection for png writing
-      png(filename = paste("../output/", names(wdata[i]), a, ".png"), 
+      png(filename = paste("output/", names(wdata[i]), a, ".png"), 
             width = 1600, height = 720)
       
       #setup plot and draw line
@@ -119,7 +119,7 @@ for (i in 2:SIZE) {
 cat("Printing overlay...\n")
 
 #open png device connection
-png(filename = paste("../output/overlay.png"), 
+png(filename = paste("output/overlay.png"), 
      width = 1600 * WIDTH_MULTIPLIER, height = 720 * HEIGHT_MULTIPLIER)
 
 #color vector
@@ -200,7 +200,7 @@ if (EnoughColors) {
       nframe[1] = NULL
       
       #open connection for png writing
-      png(filename = paste("../output/", a, ".png"), 
+      png(filename = paste("output/", a, ".png"), 
             width = 1600, height = 720)
       
       #setup plot and draw line
@@ -268,7 +268,7 @@ for (i in 2:SIZE) {
    zooTrans = na.locf(object = zooTrans, xout = secIndex)
    
    #open png device connection and set the parameters then plot
-   png(filename = paste("../output/", names(wdata[i]), "_reliability.png"), 
+   png(filename = paste("output/", names(wdata[i]), "_reliability.png"), 
          width = 1600 * WIDTH_MULTIPLIER, height = 720 * HEIGHT_MULTIPLIER)
    
    par(mfrow = c(1, 1), mar = c(B, L, T, R))
