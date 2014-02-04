@@ -6,3 +6,7 @@
 sudo apt-get install r-base
 sudo apt-get install zip
 sudo R --vanilla --silent < src/setup.R
+
+if [ ! -d output ]; then
+   mkdir output
+fi
