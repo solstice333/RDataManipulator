@@ -8,13 +8,13 @@
 #user input within this R script. If bash shell script (the caller of this R script) 
 #is intended to be ran, DEBUG is false, true otherwise. In other words, DEBUG is true when
 #this script is intended to be ran individually
-DEBUG = TRUE
+DEBUG = FALSE
 
 #Reliability threshold
 RELIABILITY_THRESHOLD = 12
 
 #Loop to collect details for colClasses vector
-# Input for data frame to have mac_id, timestamp, iwc
+# Example Input for data frame to have mac_id, timestamp, iwc
 #    test.csv
 #    1 (NULL)
 #    2 (character)
