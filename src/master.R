@@ -14,8 +14,8 @@ splitColumn = as.numeric(cmd_args[length(cmd_args) - 1])
 file = cmd_args[length(cmd_args)]
 
 source("src/format.R")
-source("src/graph.R")
-#source("src/analyzeAC.R")
-#source("src/graphAC.R")
+#source("src/graph.R")
+source("src/analyzeAC.R")
+source("src/graphAC.R")
 
 #Done

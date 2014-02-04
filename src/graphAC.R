@@ -57,7 +57,7 @@ while (a < end) {
    
    #create legend
    legendNames = c("original", "reduced by 0.5")
-   legend("topleft", lty = rep("solid", SIZE - 1), lwd = 5, bty = "n", cex = 1.5, 
+   legend("topleft", lty = "solid", lwd = 5, bty = "n", cex = 1.5, 
          legend = legendNames, col = c("black", "blue"))
    
    #close connection to device
