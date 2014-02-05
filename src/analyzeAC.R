@@ -40,7 +40,8 @@ names(data) = c("ts", "data", "xlt", "iswd")
 data = subset(data, iswd != 0 & iswd != 6)
 
 # If data is greater than 0.5 then subtract 0.5 from it
-reduced = ifelse(data$data > 0.5, data$data - 0.5, data$data)
-data = data.frame(data, reduced)
+delta = ifelse(data$data > 0.5, data$data - 0.5, 0)
+reduced = data$data - delta
+data = data.frame(data, delta, reduced)
 
 
