@@ -2,9 +2,12 @@
 # 
 # Author: knavero
 ###############################################################################
+library(zoo)
+library(chron)
 
 FMT = "%Y-%m-%d %H:%M:%S"
 
+cat("Finding minimum...\n")
 # Create a name lookup table for the mac_id associating to its average for values greater
 # than 0.7
 average = vector(mode = "numeric")
@@ -25,23 +28,35 @@ names(map) = c("id", "mac_id", "average")
 min = subset(map, is.finite(map$average))
 min = subset(min, min$average == min(min$average))
 
-# Capture the data you want to work with i.e. the mac_id with the smallest average
-data = subset(wdata, !is.na(wdata[min$id]))
-data = data.frame(data[,1], data[min$id])
+cat("Linear interpolating values for empty bins...\n")
+# linear interpolate NA's within data frame
+data = wdata[2:length(wdata)]
+data = zoo(data, order.by = wdata[,1])
+ts = seq(from = start(data), to = end(data), by = 30 * 60)
+data = na.approx(object = data, xout = ts)
+data = data.frame(ts, data)
 
+cat("Adding POSIXlt and weekday columns...\n")
+# Add POSIXlt and weekday column
 xlt = strptime(data[,1], format = FMT)
-data = data.frame(data, xlt) #tag on POSIXlt objects
+data = data.frame(data, xlt) #tag on POSIXlt objects (which changes it back to ct)
 data$xlt = strptime(data$xlt, format = FMT) #convert to POSIXlt
 
-data = data.frame(data, data[,3]$wday) #tag on isWeekday variable
-names(data) = c("ts", "data", "xlt", "iswd")
+data = data.frame(data, data$xlt$wday) #tag on day variable
+names(data)[length(data)] = "wd"
 
-# Analyze the weekdays
-data = subset(data, iswd != 0 & iswd != 6)
+cat("Removing weekends...\n")
+# parse the days and remove weekends
+data = subset(data, wd != 0 & wd != 6) 
 
+cat("Calcuating the reduction...\n")
 # If data is greater than 0.5 then subtract 0.5 from it
-delta = ifelse(data$data > 0.5, data$data - 0.5, 0)
-reduced = data$data - delta
-data = data.frame(data, delta, reduced)
+delta = ifelse(data[,min$id] > 0.5, data[,min$id] - 0.5, 0)
+data = data.frame(data, delta)
+orig = data
 
-
+cat("Creating reduced values...\n")
+# Obtain the reduced values. Don't forget to na.omit when jittering
+for (i in 2:(length(data) - 3)) {
+   data[,i] = ifelse(data[,i] - delta < 0, 0, data[,i] - delta)
+}

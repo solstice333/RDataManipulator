@@ -9,6 +9,7 @@
 #is intended to be ran, DEBUG is false, true otherwise. In other words, DEBUG is true when
 #this script is intended to be ran individually
 DEBUG = FALSE
+AUTO_INPUT = FALSE
 
 #Reliability threshold
 RELIABILITY_THRESHOLD = 12
@@ -94,7 +95,15 @@ if(DEBUG) {
 
 cat("Processing...\n")
 
-if (!DEBUG)
+if (AUTO_INPUT) {
+   setwd("~/Desktop/r_workspace/TestData/resources")
+   file = "test.csv"
+   types = c("NULL", "character", "numeric", "numeric", "NULL")
+   timeIndex = 2;
+   splitColumn = 1;
+}
+
+if (!DEBUG && !AUTO_INPUT)
    setwd("resources")
 
 #read the csv, remove last row as a precaution
@@ -114,6 +123,7 @@ cat("Finished initializing data frame!\n")
 #reshape the data frame to wide format
 cat("Reshaping data frame to wide format...\n")
 wdata = reshape(data, idvar = names(data[timeIndex]), timevar = names(data[splitColumn]), direction = "wide")
+names(wdata)[1] = "timestamp"
 cat("Finished reshaping data frame to wide format!\n")
 
 #write to output directory
